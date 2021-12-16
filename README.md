@@ -54,6 +54,8 @@ tsmc   <= tmsc_o when (tmsc_oe_o = '1') else 'Z';
 tsmc_i <= tsmc;
 ```
 
+:warning: Better add a "panic resistor" to the TSMC line - just to be safe.
+
 
 ## Simulation
 
