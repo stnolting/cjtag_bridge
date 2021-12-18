@@ -66,6 +66,7 @@ end cjtag_bridge;
 architecture cjtag_bridge_rtl of cjtag_bridge is
 
   -- activation sequence commands --
+  -- NOTE: these are bit-reversed as the LSB is sent first!! --
   constant cmd_oac_c : std_ulogic_vector(3 downto 0) := "0011"; -- online activation code
   constant cmd_ec_c  : std_ulogic_vector(3 downto 0) := "0001"; -- extension code
   constant cmd_cp_c  : std_ulogic_vector(3 downto 0) := "0000"; -- check packet
@@ -181,7 +182,7 @@ begin
         status.sreg   <= (others => '0');
       elsif (status.online = '0') then
         if (io_sync.tckc_rising = '1') then
-          status.sreg <= status.sreg(10 downto 0) & io_sync.tmsc_ff(1);
+          status.sreg <= status.sreg(status.sreg'left-1 downto 0) & io_sync.tmsc_ff(1); -- data is transmitted LSB-first
         end if;
         if (status.sreg(11 downto 08) = cmd_oac_c) and -- check activation code
            (status.sreg(07 downto 04) = cmd_ec_c) and
