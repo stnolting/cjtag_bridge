@@ -48,12 +48,12 @@ end cjtag_bridge;
 
 ### Hardware Requirements
 
-The bridge requires a module-external tri-state driver for the TMSC signal, which handles the module's
+The bridge requires a module-external tri-state driver for the off-chip TMSC signal (`tmsc`), which handles the module's
 `tmsc_i`, `tmsc_o` and `tmsc_oe_o` signals:
 
 ```vhdl
 tsmc   <= tmsc_o when (tmsc_oe_o = '1') else 'Z';
-tsmc_i <= tsmc;
+tmsc_i <= tsmc;
 ```
 
 :warning: Better add a "panic resistor" into the TSMC line - just to be safe.
