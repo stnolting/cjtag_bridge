@@ -62,7 +62,7 @@ tmsc_i <= tmsc;
 ## Simulation
 
 The projects provides a very simple testbench to test the basic IO functions
-([`sim/fpga_torture_tb.vhd`](https://github.com/stnolting/cjtag_bridge/blob/main/sim/cjtag_bridge_tb.vhd)).
+([`sim/cjtag_bridge_tb.vhd`](https://github.com/stnolting/cjtag_bridge/blob/main/sim/cjtag_bridge_tb.vhd)).
 It can be simulated by GHDL via the provides script:
 
 ```
