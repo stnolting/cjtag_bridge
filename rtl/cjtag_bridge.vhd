@@ -49,13 +49,11 @@ entity cjtag_bridge is
     clk_i     : in  std_ulogic; -- main clock
     rstn_i    : in  std_ulogic; -- main reset, async, low-active
     -- cJTAG (from debug probe) --
-    trstn_i   : in  std_ulogic; -- tap reset, low-active, optional
     tckc_i    : in  std_ulogic; -- tap clock
     tmsc_i    : in  std_ulogic; -- tap data input
     tmsc_o    : out std_ulogic; -- tap data output
     tmsc_oe_o : out std_ulogic; -- tap data output enable (tri-state driver)
     -- JTAG (to device) --
-    trstn_o   : out std_ulogic; -- tap reset, low-active, optional
     tck_o     : out std_ulogic; -- tap clock
     tdi_o     : out std_ulogic; -- tap data input
     tdo_i     : in  std_ulogic; -- tap data output
@@ -73,11 +71,9 @@ architecture cjtag_bridge_rtl of cjtag_bridge is
 
   -- I/O synchronization --
   type io_sync_t is record
-    trst_ff : std_ulogic_vector(2 downto 0);
     tckc_ff : std_ulogic_vector(2 downto 0);
     tmsc_ff : std_ulogic_vector(2 downto 0);
     --
-    trst         : std_ulogic;
     tckc_rising  : std_ulogic;
     tckc_falling : std_ulogic;
     tmsc_rising  : std_ulogic;
@@ -117,14 +113,10 @@ begin
   input_synchronizer: process(clk_i)
   begin
     if rising_edge(clk_i) then
-      io_sync.trst_ff <= io_sync.trst_ff(1 downto 0) & trstn_i;
       io_sync.tckc_ff <= io_sync.tckc_ff(1 downto 0) & tckc_i;
       io_sync.tmsc_ff <= io_sync.tmsc_ff(1 downto 0) & tmsc_i;
     end if;
   end process input_synchronizer;
-
-  -- reset --
-  io_sync.trst <= '1' when (io_sync.trst_ff(2 downto 1) = "00") else '0';
 
   -- clock --
   io_sync.tckc_rising  <= '1' when (io_sync.tckc_ff(2 downto 1) = "01") else '0';
@@ -141,26 +133,21 @@ begin
   begin
     if (rstn_i = '0') then
       reset.cnt  <= (others => '0');
-      reset.sreg <= (others => '-');
+      reset.sreg <= "01"; -- internal reset after bitstream upload
     elsif rising_edge(clk_i) then
-      if (io_sync.trst = '1') then -- sync reset
-        reset.cnt  <= (others => '0');
-        reset.sreg <= (others => '-');
+      -- edge counter --
+      if (io_sync.tckc_rising = '1') or (io_sync.tckc_falling = '1') then -- reset on any TCKC edge
+        reset.cnt <= (others => '0');
+      elsif (reset.cnt /= "111") and -- saturate
+            ((io_sync.tmsc_rising = '1') or (io_sync.tmsc_falling = '1')) then -- increment on any TMSC edge
+        reset.cnt <= std_ulogic_vector(unsigned(reset.cnt) + 1);
+      end if;
+      -- reset edge detector --
+      reset.sreg(1) <= reset.sreg(0);
+      if (reset.cnt = "111") then
+        reset.sreg(0) <= '1';
       else
-        -- edge counter --
-        if (io_sync.tckc_rising = '1') or (io_sync.tckc_falling = '1') then -- reset on any TCKC edge
-          reset.cnt <= (others => '0');
-        elsif (reset.cnt /= "111") and -- saturate
-              ((io_sync.tmsc_rising = '1') or (io_sync.tmsc_falling = '1')) then -- increment on any TMSC edge
-          reset.cnt <= std_ulogic_vector(unsigned(reset.cnt) + 1);
-        end if;
-        -- reset edge detector --
-        reset.sreg(1) <= reset.sreg(0);
-        if (reset.cnt = "111") then
-          reset.sreg(0) <= '1';
-        else
-          reset.sreg(0) <= '0';
-        end if;
+        reset.sreg(0) <= '0';
       end if;
     end if;
   end process bridge_reset;
@@ -177,7 +164,7 @@ begin
       status.online <= '0';
       status.sreg   <= (others => '0');
     elsif rising_edge(clk_i) then
-      if (io_sync.trst = '1') or (reset.fire = '1') then -- sync reset
+      if (reset.fire = '1') then -- sync reset
         status.online <= '0';
         status.sreg   <= (others => '0');
       elsif (status.online = '0') then
@@ -205,7 +192,7 @@ begin
       ctrl.tdi   <= '0';
       ctrl.tms   <= '0';
     elsif rising_edge(clk_i) then
-      if (io_sync.trst = '1') or (status.online = '0') then -- sync reset
+      if (status.online = '0') then -- reset while offline
         ctrl.state <= S_NTDI;
         ctrl.tck   <= '0';
         ctrl.tdi   <= '0';
@@ -246,13 +233,12 @@ begin
   end process bridge_control;
 
   -- IO control --
-  trstn_o <= trstn_i;
-  tck_o   <= io_sync.tckc_ff(1) when (status.online = '0') else ctrl.tck;
-  tms_o   <= io_sync.tmsc_ff(1) when (status.online = '0') else ctrl.tms;
-  tdi_o   <= '0'                when (status.online = '0') else ctrl.tdi;
+  tck_o <= io_sync.tckc_ff(1) when (status.online = '0') else ctrl.tck;
+  tms_o <= io_sync.tmsc_ff(1) when (status.online = '0') else ctrl.tms;
+  tdi_o <= '0'                when (status.online = '0') else ctrl.tdi;
 
   -- tri-state control --
-  tmsc_o    <= tdo_i;
+  tmsc_o    <= tdo_i; -- FIXME: synchronize tdo_i?
   tmsc_oe_o <= '1' when (ctrl.state = S_TDO) else '0';
 
 

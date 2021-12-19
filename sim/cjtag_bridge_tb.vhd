@@ -22,13 +22,11 @@ architecture cjtag_bridge_tb_rtl of cjtag_bridge_tb is
     clk_i     : in  std_ulogic;
     rstn_i    : in  std_ulogic;
     -- cJTAG --
-    trstn_i   : in  std_ulogic;
     tckc_i    : in  std_ulogic;
     tmsc_i    : in  std_ulogic;
     tmsc_o    : out std_ulogic;
     tmsc_oe_o : out std_ulogic;
     -- JTAG --
-    trstn_o   : out std_ulogic;
     tck_o     : out std_ulogic;
     tdi_o     : out std_ulogic;
     tdo_i     : in  std_ulogic;
@@ -41,7 +39,6 @@ architecture cjtag_bridge_tb_rtl of cjtag_bridge_tb is
 
   -- cJTAG interface --
   type cjtag_t is record
-    trstn   : std_ulogic;
     tckc    : std_ulogic;
     tmsc    : std_ulogic;
     tmsc_rd : std_ulogic;
@@ -64,16 +61,14 @@ begin
     clk_i     => clk_gen,
     rstn_i    => rstn_gen,
     -- cJTAG --
-    trstn_i   => cjtag.trstn,
     tckc_i    => cjtag.tckc,
     tmsc_i    => cjtag.tmsc,
     tmsc_o    => cjtag.tmsc_rd,
     tmsc_oe_o => open,
     -- JTAG --
-    trstn_o   => open,
     tck_o     => open,
     tdi_o     => open,
-    tdo_i     => '-',
+    tdo_i     => '0',
     tms_o     => open
   );
 
@@ -83,11 +78,8 @@ begin
   stimulus: process
   begin
     -- hardware reset --
-    cjtag.trstn <= '0';
-    cjtag.tckc  <= '0';
-    cjtag.tmsc  <= '0';
-    wait for 100 ns;
-    cjtag.trstn <= '1';
+    cjtag.tckc <= '0';
+    cjtag.tmsc <= '0';
     wait for 100 ns;
 
     -- protocol reset: 8 TMSC edges while TCKC is kept high --
