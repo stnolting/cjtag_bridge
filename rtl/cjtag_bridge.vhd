@@ -198,11 +198,11 @@ begin
         ctrl.tdi   <= '0';
         ctrl.tms   <= '0';
       else
+        -- fsm --
         case ctrl.state is
 
           when S_NTDI => -- sample inverse TDI and clear clock
             if (io_sync.tckc_rising = '1') then
-              ctrl.tck <= '0';
               ctrl.tdi <= not io_sync.tmsc_ff(1);
             end if;
             if (io_sync.tckc_falling = '1') then
@@ -218,9 +218,6 @@ begin
             end if;
 
           when S_TDO => -- output TDO and set clock
-            if (io_sync.tckc_rising = '1') then
-              ctrl.tck <= '1';
-            end if;
             if (io_sync.tckc_falling = '1') then
               ctrl.state <= S_NTDI;
             end if;
@@ -228,6 +225,15 @@ begin
           when others =>
             ctrl.state <= S_NTDI;
         end case;
+
+        -- JTAG clock control --
+        if (ctrl.state = S_TDO) then
+          if (io_sync.tckc_rising = '1') then
+            ctrl.tck <= '1';
+          elsif (io_sync.tckc_falling = '1') then
+            ctrl.tck <= '0';
+          end if;
+        end if;
       end if;
     end if;
   end process bridge_control;
