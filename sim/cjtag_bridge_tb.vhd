@@ -77,131 +77,163 @@ begin
   -- -------------------------------------------------------------------------------------------
   stimulus: process
   begin
-    -- hardware reset --
     cjtag.tckc <= '0';
     cjtag.tmsc <= '0';
-    wait for 100 ns;
+    wait for 200 ns;
 
-    -- protocol reset: 8 TMSC edges while TCKC is kept high --
+    -- WriteEscapeSeq(10); --
+    -- protocol reset: 10 TMSC edges while TCKC is kept high --
     cjtag.tckc <= '1';
     cjtag.tmsc <= '0';
     wait for 100 ns;
+    for i in 0 to 9 loop
+      cjtag.tmsc <= not cjtag.tmsc;
+      wait for 100 ns;
+    end loop;
+
+    -- WriteTMS(0xFFFFFFFF, xx); --
+    -- send >= 22 dummy clocks to reset 4-wire JTAG --
     cjtag.tmsc <= '1';
     wait for 100 ns;
+    for i in 0 to 22*2 loop
+      cjtag.tckc <= not cjtag.tckc;
+      wait for 100 ns;
+    end loop;
+
+    -- WriteTMS(0x00, 1); --
+    -- TAP reset --
+    cjtag.tckc <= '0';
     cjtag.tmsc <= '0';
     wait for 100 ns;
-    cjtag.tmsc <= '1';
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
     wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    -- WriteEscapeSeq(7); --
+    -- escape sequence selection --
+    cjtag.tckc <= '1';
     cjtag.tmsc <= '0';
     wait for 100 ns;
-    cjtag.tmsc <= '1';
-    wait for 100 ns;
-    cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tmsc <= '1';
-    wait for 100 ns;
+    for i in 0 to 6 loop
+      cjtag.tmsc <= not cjtag.tmsc;
+      wait for 100 ns;
+    end loop;
+
+    -- WriteTMS(0x0C, 4); --
+    -- write 4-bit OAC --
+    cjtag.tckc <= '0';
     cjtag.tmsc <= '0';
     wait for 100 ns;
 
-    -- activation sequence (each nibble is transmitted LSB-first) --
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+
+    -- WriteTMS(0x08, 4); --
+    -- write 4-bit EC --
+    cjtag.tckc <= '0';
+    cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+
+    -- WriteTMS(0x00, 4); --
+    -- write 4-bit CP --
+    cjtag.tckc <= '0';
+    cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+
+    wait for 200 ns;
+
+    -- JTAG transmission --
+    --  TDI=1, TMS=1
+    cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
+    wait for 100 ns;
+    cjtag.tckc <= '1';
+    wait for 100 ns;
     cjtag.tckc <= '0';
     wait for 100 ns;
 
-    -- OAC --
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    -- JTAG transmission --
+    --  TDI=0, TMS=0
+    cjtag.tmsc <= '1';
+    wait for 100 ns;
+    cjtag.tckc <= '1';
     wait for 100 ns;
     cjtag.tckc <= '0'; cjtag.tmsc <= '0';
     wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
+    cjtag.tckc <= '1';
     wait for 100 ns;
     cjtag.tckc <= '0'; cjtag.tmsc <= '0';
     wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
+    cjtag.tckc <= '1';
     wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
+    cjtag.tckc <= '0';
     wait for 100 ns;
 
-    -- EC --
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-
-    -- CP --
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    wait for 100 ns;
-
-    -- JTAG transmission - bit 0 --
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    -- JTAG transmission - bit 1 --
-    cjtag.tckc <= '1'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '1';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-
-    cjtag.tckc <= '1'; cjtag.tmsc <= '0';
-    wait for 100 ns;
-    cjtag.tckc <= '0'; cjtag.tmsc <= '0';
-    wait for 100 ns;
 
     wait;
   end process stimulus;
