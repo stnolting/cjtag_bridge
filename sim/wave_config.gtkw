@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sun Dec 19 19:31:37 2021
+[*] Sun Dec 19 20:00:06 2021
 [*]
 [dumpfile] "/mnt/n/Projects/cjtag_bridge/sim/cjtag_bridge.ghw"
-[dumpfile_mtime] "Sun Dec 19 19:29:01 2021"
-[dumpfile_size] 702584
-[savefile] "/mnt/n/Projects/cjtag_bridge/sim/config.gtkw"
-[timestart] 0
+[dumpfile_mtime] "Sun Dec 19 19:57:56 2021"
+[dumpfile_size] 702784
+[savefile] "/mnt/n/Projects/cjtag_bridge/sim/wave_config.gtkw"
+[timestart] 8004000000
 [size] 1366 745
-[pos] -87 -87
-*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-30.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.cjtag_bridge_tb.
 [treeopen] top.cjtag_bridge_tb.cjtag_bridge_inst.
@@ -20,6 +20,55 @@
 [signals_width] 132
 [sst_expanded] 1
 [sst_vpaned_height] 209
+@200
+-cJTAG
+@28
+top.cjtag_bridge_tb.cjtag_bridge_inst.tckc_i
+top.cjtag_bridge_tb.cjtag_bridge_inst.tmsc_i
+top.cjtag_bridge_tb.cjtag_bridge_inst.tmsc_o
+top.cjtag_bridge_tb.cjtag_bridge_inst.tmsc_oe_o
+@200
+-JTAG
+@29
+top.cjtag_bridge_tb.cjtag_bridge_inst.tck_o
+@28
+top.cjtag_bridge_tb.cjtag_bridge_inst.tms_o
+top.cjtag_bridge_tb.cjtag_bridge_inst.tdi_o
+top.cjtag_bridge_tb.cjtag_bridge_inst.tdo_i
+@200
+-Global
+@28
+top.cjtag_bridge_tb.cjtag_bridge_inst.rstn_i
+top.cjtag_bridge_tb.cjtag_bridge_inst.clk_i
+@200
+-IO SYNC
+@28
+#{top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tckc_ff[2:0]} top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tckc_ff[2] top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tckc_ff[1] top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tckc_ff[0]
+#{top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tmsc_ff[2:0]} top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tmsc_ff[2] top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tmsc_ff[1] top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tmsc_ff[0]
+top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tmsc_falling
+top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tmsc_rising
+top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tckc_falling
+top.cjtag_bridge_tb.cjtag_bridge_inst.io_sync.tckc_rising
+@200
+-RESET
+@28
+#{top.cjtag_bridge_tb.cjtag_bridge_inst.reset.cnt[2:0]} top.cjtag_bridge_tb.cjtag_bridge_inst.reset.cnt[2] top.cjtag_bridge_tb.cjtag_bridge_inst.reset.cnt[1] top.cjtag_bridge_tb.cjtag_bridge_inst.reset.cnt[0]
+#{top.cjtag_bridge_tb.cjtag_bridge_inst.reset.sreg[1:0]} top.cjtag_bridge_tb.cjtag_bridge_inst.reset.sreg[1] top.cjtag_bridge_tb.cjtag_bridge_inst.reset.sreg[0]
+top.cjtag_bridge_tb.cjtag_bridge_inst.reset.fire
+@200
+-STATUS
+@22
+#{top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[11:0]} top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[11] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[10] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[9] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[8] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[7] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[6] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[5] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[4] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[3] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[2] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[1] top.cjtag_bridge_tb.cjtag_bridge_inst.status.sreg[0]
+@28
+top.cjtag_bridge_tb.cjtag_bridge_inst.status.online
+@200
+-CTRL
+@420
+top.cjtag_bridge_tb.cjtag_bridge_inst.ctrl.state
+@28
+top.cjtag_bridge_tb.cjtag_bridge_inst.ctrl.tms
+top.cjtag_bridge_tb.cjtag_bridge_inst.ctrl.tdi
+top.cjtag_bridge_tb.cjtag_bridge_inst.ctrl.tck
 @200
 -cJTAG
 @28
