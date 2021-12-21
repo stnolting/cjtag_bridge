@@ -61,7 +61,7 @@ tmsc_i <= tmsc;
 
 The projects provides a very simple testbench to test the basic IO functions
 ([`sim/cjtag_bridge_tb.vhd`](https://github.com/stnolting/cjtag_bridge/blob/main/sim/cjtag_bridge_tb.vhd)).
-It can be simulated by GHDL via the provides script:
+It can be simulated by GHDL via the provided script:
 
 ```
 cjtag_bridge/sim$ sh ghdl.sh
@@ -74,7 +74,7 @@ so it can be viewed using _gtkwave_:
 cjtag_bridge/sim$ gtkwave cjtag_bridge.ghw
 ```
 
-A pre-defined waveform configuration file is also provided (`sim/wave_config.gtkw`).
+A pre-defined waveform configuration file is also provided: `sim/wave_config.gtkw`
 
 
 ## Hardware Utilization
