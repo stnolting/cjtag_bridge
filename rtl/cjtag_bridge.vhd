@@ -57,7 +57,10 @@ entity cjtag_bridge is
     tck_o     : out std_ulogic; -- tap clock
     tdi_o     : out std_ulogic; -- tap data input
     tdo_i     : in  std_ulogic; -- tap data output
-    tms_o     : out std_ulogic  -- tap mode select
+    tms_o     : out std_ulogic; -- tap mode select
+    -- Debugging (for testing only) --
+    db_tck_rising_o  : out std_ulogic;
+    db_tck_falling_o : out std_ulogic
   );
 end cjtag_bridge;
 
@@ -125,6 +128,10 @@ begin
   -- data --
   io_sync.tmsc_rising  <= '1' when (io_sync.tmsc_ff(2 downto 1) = "01") else '0';
   io_sync.tmsc_falling <= '1' when (io_sync.tmsc_ff(2 downto 1) = "10") else '0';
+
+  -- debug --
+  db_tck_rising_o  <= io_sync.tckc_rising;
+  db_tck_falling_o <= io_sync.tckc_falling;
 
 
   -- Reset Controller -----------------------------------------------------------------------

@@ -30,7 +30,10 @@ architecture cjtag_bridge_tb_rtl of cjtag_bridge_tb is
     tck_o     : out std_ulogic;
     tdi_o     : out std_ulogic;
     tdo_i     : in  std_ulogic;
-    tms_o     : out std_ulogic
+    tms_o     : out std_ulogic;
+    -- Debugging (for testing only) --
+    db_tck_rising_o  : out std_ulogic;
+    db_tck_falling_o : out std_ulogic
   );
   end component;
 
@@ -69,7 +72,10 @@ begin
     tck_o     => open,
     tdi_o     => open,
     tdo_i     => '0',
-    tms_o     => open
+    tms_o     => open,
+    -- Debugging (for testing only) --
+    db_tck_rising_o  => open,
+    db_tck_falling_o => open
   );
 
 

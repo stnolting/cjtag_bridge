@@ -43,6 +43,8 @@ end cjtag_bridge;
 
 :information_source: All 4-wire JTAG signals are expected to be sync to `clk_i` (same clock domain).
 
+:information_source: The debug signals `db_*` are intended for testing/development only.
+
 ### Hardware Requirements
 
 The bridge requires a module-external tri-state driver for the off-chip TMSC signal (`tmsc`), which handles the module's
