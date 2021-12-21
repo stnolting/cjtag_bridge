@@ -109,6 +109,12 @@ architecture cjtag_bridge_rtl of cjtag_bridge is
   end record;
   signal ctrl : ctrl_t;
 
+  -- debugging signals --
+  type debug_t is record
+    tck_sync : std_ulogic_vector(1 downto 0);
+  end record;
+  signal debug : debug_t;
+
 begin
 
   -- cJTAG Input Signal Synchronizer --------------------------------------------------------
@@ -128,10 +134,6 @@ begin
   -- data --
   io_sync.tmsc_rising  <= '1' when (io_sync.tmsc_ff(2 downto 1) = "01") else '0';
   io_sync.tmsc_falling <= '1' when (io_sync.tmsc_ff(2 downto 1) = "10") else '0';
-
-  -- debug --
-  db_tck_rising_o  <= io_sync.tckc_rising;
-  db_tck_falling_o <= io_sync.tckc_falling;
 
 
   -- Reset Controller -----------------------------------------------------------------------
@@ -253,6 +255,27 @@ begin
   -- tri-state control --
   tmsc_o    <= tdo_i; -- FIXME: synchronize tdo_i?
   tmsc_oe_o <= '1' when (ctrl.state = S_TDO) else '0';
+
+
+  -- Debugging Stuff ------------------------------------------------------------------------
+  -- -------------------------------------------------------------------------------------------
+  debug_control: process(rstn_i, clk_i)
+  begin
+    if (rstn_i = '0') then
+      debug.tck_sync <= (others => '0');
+    elsif rising_edge(clk_i) then
+      debug.tck_sync(1) <= debug.tck_sync(0);
+      if (status.online = '0') then
+        debug.tck_sync(0) <= io_sync.tckc_ff(1);
+      else
+        debug.tck_sync(0) <= ctrl.tck;
+      end if;
+    end if;
+  end process debug_control;
+
+  -- edge detector --
+  db_tck_rising_o  <= '1' when (debug.tck_sync = "01") else '0';
+  db_tck_falling_o <= '1' when (debug.tck_sync = "10") else '0';
 
 
 end cjtag_bridge_rtl;
